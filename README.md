@@ -1,1 +1,1 @@
-# paradigmas_1er_parcial
+# paradigmas 1er parcial
