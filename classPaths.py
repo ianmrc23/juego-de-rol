@@ -4,7 +4,7 @@ from classBase import Base
 class Deva(Base):
     def __init__(self):
         super().__init__()
-        self.immortality = random.int(11, 15)
+        self.immortality = random.randint(11, 15)
         
     def rebirth(self):
         self.resistance = int(self.resistance * self.immortality // 10)
@@ -21,7 +21,7 @@ class Deva(Base):
 class Asuras(Base):
     def __init__(self):
         super().__init__()
-        self.superior_resistance = random.int(11, 15)
+        self.superior_resistance = random.randint(11, 15)
         
     def rebirth(self):
         self.strength = int(self.strength * self.superior_resistance // 10)
@@ -46,7 +46,7 @@ class Asuras(Base):
 class Manushyas(Base):
     def __init__(self):
         super().__init__()
-        self.adaptability = random.int(11, 15)
+        self.adaptability = random.randint(11, 15)
         
     def rebirth(self):
         self.agility = int(self.agility * self.adaptability // 10)
@@ -71,7 +71,7 @@ class Manushyas(Base):
 class Tiryak(Base):
     def __init__(self):
         super().__init__()
-        self.animal_strength = random.int(11, 15)
+        self.animal_strength = random.randint(11, 15)
         
     def rebirth(self):
         self.strength = int(self.strength * self.animal_strength // 10)
@@ -96,7 +96,7 @@ class Tiryak(Base):
 class Pretas(Base):
     def __init__(self):
         super().__init__()
-        self.invisibility = random.int(11, 15)
+        self.invisibility = random.randint(11, 15)
         
     def rebirth(self):
         self.defense = int(self.defense * self.invisibility // 10)
@@ -121,7 +121,7 @@ class Pretas(Base):
 class Narakas(Base):
     def __init__(self):
         super().__init__()
-        self.infernal_power = random.int(11, 15)
+        self.infernal_power = random.randint(11, 15)
         
     def rebirth(self):
         self.resistance = int(self.resistance * self.infernal_power // 10)

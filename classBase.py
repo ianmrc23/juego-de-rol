@@ -1,6 +1,5 @@
 import random
 from abc import ABC, abstractclassmethod
-from classPaths import Deva, Asuras, Manushyas, Tiryak, Pretas, Narakas
 
 class Base(ABC):
     def __init__(self):
@@ -28,7 +27,7 @@ class Base(ABC):
 
     def average_statistics(self):
         statistics = [self.healthPoints, self.strength, self.resistance, self.defense, self.intelligence, self.agility]
-        return sum(statistics) / len(statistics)
+        return int(sum(statistics) / len(statistics))
 
     def assign_points(self, statistic, amount):
         setattr(self, statistic, getattr(self, statistic) + amount)
@@ -37,11 +36,11 @@ class Base(ABC):
 
     def view_statistics(self):
         statistics = ["lives", "level", "healthPoints", "strength", "resistance", "defense", "intelligence", "agility"]
-        return "\n".join([f"{s.capitalize()}: {getattr(self, s)}" for s in statistics])
+        return "\n\n".join([f"{s.capitalize()}: {getattr(self, s)}" for s in statistics])
 
     def view_coins(self):
-        coins_str = "\n".join([f"{currency.capitalize()}: {amount}" for currency, amount in self.coins.items()])
-        return f"Coins:\n{coins_str}"
+        coins_str = "\n\n".join([f"{currency.capitalize()}: {amount}" for currency, amount in self.coins.items()])
+        return f"\n{coins_str}"
  
     def enemy_strength(self, enemy):
         difference = (enemy.average_statistics() - self.average_statistics())
@@ -122,18 +121,18 @@ class Base(ABC):
             return "You don't have enough gold coins to train. Get more gold coins to improve your skills!"
 
     def instant_defeat(self, opponent_class):
-        strong_enemies = {Deva: Asuras, Asuras: Manushyas, Manushyas: Tiryak, Tiryak: Pretas, Pretas: Deva, Narakas: Manushyas}
-        weak_enemies = {Deva: Narakas, Asuras: Deva, Manushyas: Pretas, Tiryak: Manushyas, Pretas: Asuras, Narakas: Deva}
+        strong_enemies = {"Deva": "Asuras", "Asuras": "Manushyas", "Manushyas": "Tiryak", "Tiryak": "Pretas", "Pretas": "Deva", "Narakas": "Manushyas"}
+        weak_enemies = {"Deva": "Narakas", "Asuras": "Deva", "Manushyas": "Pretas", "Tiryak": "Manushyas", "Pretas": "Asuras", "Narakas": "Deva"}
         
-        if opponent_class.__class__ == strong_enemies.get(self.__class__):
+        if opponent_class.__class__.__name__ == strong_enemies.get(self.__class__.__name__):
             if opponent_class.average_statistics() - self.average_statistics() >= 100:
                 return "defeat"
-        elif opponent_class.__class__ == weak_enemies.get(self.__class__):
+        elif opponent_class.__class__.__name__ == weak_enemies.get(self.__class__.__name__):
             if self.average_statistics() - opponent_class.average_statistics() >= 100:
                 return "victory"
         
         return None
-    
+
     def mana_attack(self):
         return int(self.intelligence * 5 // 2)
     
@@ -156,22 +155,17 @@ class Base(ABC):
         else:
             return False
 
-    @abstractclassmethod
     def rebirth(self):
         pass
     
-    @abstractclassmethod
     def mana_ability(self):
         pass
 
-    @abstractclassmethod
     def attack_ability(self):
         pass
 
-    @abstractclassmethod
     def defense_ability(self):
         pass
 
-    @abstractclassmethod
     def evasion_ability(self):
         pass

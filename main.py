@@ -1,26 +1,31 @@
 import random
+import os
 from classPaths import Deva, Asuras, Manushyas, Tiryak, Pretas, Narakas
 
 def configuration():
     while True:
         try:
-            final_level = int(input("What level do you want to finish the game at? (between 2 and 100): "))
+            final_level = int(input("\n* What level do you want to finish the game at? (between 2 and 100): "))
             if final_level < 2 or final_level > 100:
-                print("The level must be between 2 and 100. Please try again.")
+                print("\nThe level must be between 2 and 100. Please try again.")
             else:
+                press_enter_to_continue()
+                clear_terminal()
                 return final_level
         except ValueError:
-            print("Please enter a valid integer.")
+            print("\nPlease enter a valid integer.")
 
 def generate_character():
-    print("Select your path:")
-    print("1. Deva")
-    print("2. Asuras")
-    print("3. Manushyas")
-    print("4. Tiryak")
-    print("5. Pretas")
-    print("6. Narakas")
-    option = input("Choose a number corresponding to the desired path: ")
+    print("-" * 50)
+    print("\nSelect your path:\n")
+    print("-" * 50)
+    print("\n1. Deva")
+    print("\n2. Asuras")
+    print("\n3. Manushyas")
+    print("\n4. Tiryak")
+    print("\n5. Pretas")
+    print("\n6. Narakas")
+    option = input("\n* Choose a number corresponding to the desired path: ")
 
     if option.isdigit():
         option = int(option)
@@ -73,65 +78,90 @@ def generate_enemy(level):
 
     return enemy
     
-def character_actions_menu():
-    print("Character Actions Menu:")
-    print("1. Analyze Enemy")
-    print("2. Fight")
-    print("3. Flee")
-    print("4. Menu")
-    print("5. Quit Game")
+def character_actions_menu(player, enemy):
+    print("\nCharacter Actions Menu:")
+    print("\n1. Analyze Enemy")
+    print("\n2. Fight")
+    print("\n3. Flee")
+    print("\n4. Menu")
+    print("\n5. Quit Game")
     
-    choice = input("Choose an action: ")
+    choice = input("\n* Choose an action: ")
 
     if choice == "1":
-        analyze_enemy()
+        clear_terminal()
+        analyze_enemy(player, enemy)
+        press_enter_to_continue()
     elif choice == "2":
-        fight()
+        """ clear_terminal() """
+        fight(player, enemy)
     elif choice == "3":
-        flee()
+        clear_terminal()
+        flee(player, enemy)
+        press_enter_to_continue()
     elif choice == "4":
-        character_menu()
+        clear_terminal()
+        character_menu(player, enemy)
     elif choice == "5":
-        return True
+        clear_terminal()
+        quit_game()
     else:
+        clear_terminal()
         print("Invalid choice. Please select again.")
-        character_actions_menu()
+        character_actions_menu(player, enemy)
 
-def character_menu():
-    print("Character Menu:")
-    print("1. View Statistics")
-    print("2. Assign Free Points")
-    print("3. View Coins")
-    print("4. Inventory")
-    print("5. Shop")
-    print("6. Return to Main Menu")
+def character_menu(player, enemy):
+    print("-" * 50)
+    print("\nCharacter Menu:\n")
+    print("-" * 50)
+    print("\n1. View Statistics")
+    print("\n2. Assign Free Points")
+    print("\n3. View Coins")
+    print("\n4. Inventory")
+    print("\n5. Shop")
+    print("\n6. Return to Main Menu")
 
-    choice = input("Choose an option: ")
+    choice = input("\n* Choose an option: ")
 
     if choice == "1":
-        menu_view_statistics()
+        clear_terminal()
+        menu_view_statistics(player)
+        press_enter_to_continue()
+        
     elif choice == "2":
-        assign_free_points()
+        clear_terminal()
+        assign_free_points(player)
+        press_enter_to_continue()
     elif choice == "3":
-        menu_view_coins()
+        clear_terminal()
+        menu_view_coins(player)
+        press_enter_to_continue()
     elif choice == "4":
-        view_inventory()
+        clear_terminal()
+        view_inventory(player)
+        press_enter_to_continue()
     elif choice == "5":
-        visit_shop()
+        clear_terminal()
+        visit_shop(player)
+        press_enter_to_continue()
     elif choice == "6":
-        character_actions_menu()
+        clear_terminal()
+        character_actions_menu(player, enemy)
     else:
+        clear_terminal()
         print("Invalid choice. Please select again.")
-        character_menu()
-
+        character_menu(player, enemy)
+        
 def analyze_enemy(player, enemy):
     enemy_avg_stats = enemy.average_statistics()
     
     enemy_strength = enemy.enemy_strength(player)
     
-    print("Enemy Analysis:")
-    print(f"Enemy Strength: {enemy_strength}")
-    print(f"Average Statistics of Enemy: {enemy_avg_stats}")    
+    print("-" * 50)
+    print("\nEnemy Analysis:\n")
+    print("-" * 50)
+    print(f"\nEnemy Strength: {enemy_strength}")
+    print(f"\nAverage Statistics of Enemy: {enemy_avg_stats}")    
 
 def fight(player, enemy):
     instant_result = player.instant_defeat(enemy)
@@ -149,46 +179,64 @@ def fight(player, enemy):
     enemy_resistance = enemy.resistance
 
     while player_hp > 0 and enemy_hp > 0:
-        player_attack, player_attack_type, player_defense, player_defense_type = select_attack_defense(player, player_resistance)
+        player_attack, player_attack_type, player_defense, player_defense_type = select_attack_defense(player, enemy, player_resistance)
         enemy_attack, enemy_attack_type, enemy_defense, enemy_defense_type = select_enemy_attack_defense(enemy, enemy_resistance)
 
+        print(f"Enemy hp:   {enemy_hp}")
         enemy_damage = calculate_damage(player_attack, player_attack_type, enemy_defense, enemy_defense_type)
+        print(f"Damage: {enemy_damage}")
         enemy_hp -= enemy_damage
+        print(f"Enemy hp actualizado:   {enemy_hp}")
 
+        print(enemy.view_statistics())
         if enemy_hp <= 0:
             player.victory_reward(enemy)
             return True
 
+        print(f"Player hp:   {player_hp}")
         player_damage = calculate_damage(enemy_attack, enemy_attack_type, player_defense, player_defense_type)
+        print(f"Damage recibido: {player_damage}")
         player_hp -= player_damage
+        print(f"Player hp actualizado:   {player_hp}") 
 
         if player_hp <= 0:
             player.defeat_losses(enemy)
             return False
 
-def flee(player, enemy_agility):
+def flee(player, enemy):
+    enemy_agility = enemy.agility
     if player.avoid_combat(enemy_agility):
-        print("You successfully flee from the enemy!")
+        print("-" * 50)
+        print("\nYou successfully flee from the enemy!\n")
+        print("\nAn enemy has been successfully generated.\n")
+        print("-" * 50)
         generate_enemy(player.level)
     else:
-        print("You couldn't flee from the enemy!")
+        print("-" * 50)
+        print("\nYou couldn't flee from the enemy!\n")
+        print("-" * 50)
 
 def menu_view_statistics(self):
-    return self.view_statistics()
+    print("-" * 50)
+    print("\nView Statistics\n")
+    print("-" * 50, "\n")
+    return print(self.view_statistics())
 
 def assign_free_points(self):
-    print("Available statistics:")
-    print("1. Health Points")
-    print("2. Strength")
-    print("3. Resistance")
-    print("4. Defense")
-    print("5. Intelligence")
-    print("6. Agility")
-    print("0. Exit")
+    print("-" * 50)
+    print("\nAvailable statistics:\n")
+    print("-" * 50)
+    print("\n1. Health Points")
+    print("\n2. Strength")
+    print("\n3. Resistance")
+    print("\n4. Defense")
+    print("\n5. Intelligence")
+    print("\n6. Agility")
+    print("\n0. Exit")
     
     statistic_options = ["healthPoints", "strength", "resistance", "defense", "intelligence", "agility"]
     while True:
-        statistic_choice = input("Choose a statistic to assign points to (or enter 0 to exit): ")
+        statistic_choice = input("\n* Choose a statistic to assign points to (or enter 0 to exit): ")
         if statistic_choice.isdigit():
             statistic_choice = int(statistic_choice)
             if statistic_choice == 0:
@@ -201,10 +249,13 @@ def assign_free_points(self):
         else:
             print("Invalid choice. Please enter a number.")
     
-    print(f"Free points available: {self.freePoints}")
+    clear_terminal()
+    print("-" * 50)
+    print(f"\nFree points available: {self.freePoints}\n")
+    print("-" * 50)
     
     while True:
-        points_to_assign = input(f"How many points do you want to assign to {chosen_statistic}? (Enter 0 to exit) ")
+        points_to_assign = input(f"\n* How many points do you want to assign to {chosen_statistic}? (Enter 0 to exit) ")
         if points_to_assign.isdigit():
             points_to_assign = int(points_to_assign)
             if points_to_assign == 0:
@@ -218,27 +269,36 @@ def assign_free_points(self):
 
     self.assign_points(chosen_statistic, points_to_assign)
 
-def menu_view_coins(player):
-    return player.view_coins()
+def menu_view_coins(self):
+    print("-" * 50)
+    print("\nCoins:\n")
+    print("-" * 50)
+    coins_str = self.view_coins()
+    print(coins_str)
+        
+def view_inventory(self):
+    print("-" * 120)
+    print("\nComing soon in version 2.0: Inventory management with armor, weapons, and consumables using linked lists.\n")
+    print("-" * 120)
 
-def view_inventory():
-    print("Coming soon in version 2.0: Inventory management with armor, weapons, and consumables using linked lists.")
-
-def visit_shop():
-    print("Coming soon in version 2.0: Shop feature with armor, weapons, and consumables using linked lists.")
+def visit_shop(self):
+    print("-" * 100)
+    print("\nComing soon in version 2.0: Shop feature with armor, weapons, and consumables using linked lists.\n")
+    print("-" * 100)
   
 def quit_game():
     raise SystemExit  
     
-def select_attack_defense(player, player_resistance):
+def select_attack_defense(player, enemy, player_resistance):
     while True:
         print("Select attack method:")
         print("1. Physical attack")
         print("2. Mana attack")
-        print("3. Special ability")
-        print("4. Back")
-
+        """ print("3. Special ability") """
+        print("4. Return to Main Menu")
+        
         attack_option = input("Choose an option: ")
+        clear_terminal()
         if attack_option == "1":
             attack = player.basic_attack()
             attack_type = 1
@@ -247,56 +307,63 @@ def select_attack_defense(player, player_resistance):
             attack = player.mana_attack()
             attack_type = 2
             break
-        elif attack_option == "3":
-            player_class = player.__class__
-            special_ability = select_attack_ability(player_class)
-            if special_ability:
-                if special_ability == "attack_ability":
-                    attack_type = 1
-                elif special_ability == "mana_ability":
-                    attack_type = 2
-                attack = getattr(player, special_ability)(player_resistance)
-            else:
-                attack = None
-            break
+            """ elif attack_option == "3":
+                player_class = player.__class__
+                special_ability = select_attack_ability(player_class)
+                if special_ability:
+                    if special_ability == "attack_ability":
+                        attack_type = 1
+                    elif special_ability == "mana_ability":
+                        attack_type = 2
+                    attack = getattr(player, special_ability)(player_resistance)
+                else:
+                    attack = None
+                break """
         elif attack_option == "4":
-            return None, None, None, None
+            clear_terminal()
+            character_actions_menu(player, enemy)
         else:
+            clear_terminal()
             print("Invalid option. Please choose a valid option.")
 
     while True:
         print("Select defense method:")
         print("1. Defend")
         print("2. Evade")
-        print("3. Special ability")
-        print("4. Back")
+        """ print("3. Special ability") """
+        print("4. Return to Main Menu")
 
         defense_option = input("Choose an option: ")
+        clear_terminal()
         if defense_option == "1":
-            defense = "defend"
+            defense = player.basic_defense()
+            defense_type = 1
             break
         elif defense_option == "2":
-            defense = "evade"
+            defense = player.basic_evasion()
+            defense_type = 2
             break
-        elif attack_option == "3":
-            player_class = player.__class__
-            special_ability = select_attack_ability(player_class)
-            if special_ability:
-                if special_ability == "defense_ability":
-                    defense_type = 1
-                elif special_ability == "evasion_ability":
-                    defense_type = 2
-                defense = getattr(player, special_ability)(player_resistance)
-            else:
-                defense = None
-            break
+            """ elif defense_option == "3":
+                player_class = player.__class__
+                special_ability = select_defense_ability(player_class)  # Corregir aquí
+                if special_ability:
+                    if special_ability == "defense_ability":
+                        defense_type = 1
+                    elif special_ability == "evasion_ability":
+                        defense_type = 2
+                    defense = getattr(player, special_ability)(player_resistance)
+                else:
+                    defense = None
+                break """
         elif defense_option == "4":
-            return None, None, None, None
+            clear_terminal()
+            character_actions_menu(player, enemy)
         else:
+            clear_terminal()
             print("Invalid option. Please choose a valid option.")
 
     return attack, attack_type, defense, defense_type
- 
+
 def select_attack_ability(player_class):
     attack_ability_options = {
         "Asuras": ["attack_ability"],
@@ -366,7 +433,6 @@ def select_defense_ability(player_class):
 def select_enemy_attack_defense(enemy, enemy_resistance):
     enemy_class = enemy.__class__.__name__
 
-    # Mapeo de habilidades especiales de ataque para cada clase de enemigo
     attack_ability_options = {
         "Asuras": ["attack_ability"],
         "Manushyas": ["mana_ability"],
@@ -375,15 +441,12 @@ def select_enemy_attack_defense(enemy, enemy_resistance):
         "Narakas": ["attack_ability"]
     }
 
-    # Definir las opciones de ataque y defensa básicas
     attack_options = ["1", "2"]
     defense_options = ["1", "2"]
 
-    # Verificar si la clase del enemigo está en el mapeo de habilidades de ataque
-    if enemy_class in attack_ability_options:
-        attack_options.append("3")
+    """ if enemy_class in attack_ability_options:
+        attack_options.append("3") """
     
-    # Verificar si la clase del enemigo está en el mapeo de habilidades de defensa
     defense_ability_options = {
         "Deva": ["defense_ability"],
         "Asuras": ["defense_ability"],
@@ -392,76 +455,92 @@ def select_enemy_attack_defense(enemy, enemy_resistance):
         "Pretas": ["defense_ability"]
     }
 
-    if enemy_class in defense_ability_options:
-        defense_options.append("3")
+    """ if enemy_class in defense_ability_options:
+        defense_options.append("3") """
 
-    # Seleccionar aleatoriamente la opción de ataque y defensa
     enemy_attack_option = random.choice(attack_options)
     enemy_defense_option = random.choice(defense_options)
 
-    # Si la opción de ataque es una habilidad especial (3)
-    if enemy_attack_option == "3":
-        # Obtener las habilidades especiales de ataque del enemigo
-        special_attacks = attack_ability_options[enemy_class]
-        # Si solo hay una habilidad especial disponible
-        if len(special_attacks) == 1:
+    if enemy_attack_option == "1":
+        enemy_attack_type = 1
+        enemy_attack = enemy.basic_attack()
+    elif enemy_attack_option == "2":
+        enemy_attack_type = 2
+        enemy_attack = enemy.mana_attack()
+    elif enemy_attack_option == "3":
+        special_attacks = attack_ability_options.get(enemy_class)
+        if special_attacks:
+            enemy_attack_type = 1 if special_attacks[0] == "attack_ability" else 2
             enemy_attack = getattr(enemy, special_attacks[0])(enemy_resistance)
-        # Si hay más de una habilidad especial disponible, elegir una al azar
-        else:
-            random_index = random.randint(0, len(special_attacks) - 1)
-            enemy_attack = getattr(enemy, special_attacks[random_index])(enemy_resistance)
-    # Si la opción de ataque es básica (1 o 2)
-    else:
-        enemy_attack = enemy.basic_attack() if enemy_attack_option == "1" else enemy.mana_attack()
 
-    # Si la opción de defensa es una habilidad especial (3)
-    if enemy_defense_option == "3":
-        # Obtener las habilidades especiales de defensa del enemigo
-        special_defenses = defense_ability_options[enemy_class]
-        # Si solo hay una habilidad especial disponible
-        if len(special_defenses) == 1:
+    if enemy_defense_option == "1":
+        enemy_defense_type = 1
+        enemy_defense = enemy.basic_defense()
+    elif enemy_defense_option == "2":
+        enemy_defense_type = 2
+        enemy_defense = enemy.basic_evasion()
+    elif enemy_defense_option == "3":
+        special_defenses = defense_ability_options.get(enemy_class)
+        if special_defenses:
+            enemy_defense_type = 1 if special_defenses[0] == "defense_ability" else 2
             enemy_defense = getattr(enemy, special_defenses[0])(enemy_resistance)
-        # Si hay más de una habilidad especial disponible, elegir una al azar
-        else:
-            random_index = random.randint(0, len(special_defenses) - 1)
-            enemy_defense = getattr(enemy, special_defenses[random_index])(enemy_resistance)
-    # Si la opción de defensa es básica (1 o 2)
-    else:
-        enemy_defense = "defend" if enemy_defense_option == "1" else "evade"
 
-    return enemy_attack, enemy_defense 
+    return enemy_attack, enemy_attack_type, enemy_defense, enemy_defense_type
     
-def calculate_damage(player_attack, player_attack_type, enemy_defense, enemy_defense_type):
-    if player_attack_type == 1 and enemy_defense_type == 1:
-        damage = int(max(0, enemy_defense - player_attack * 1.3))
-    elif player_attack_type == 1 and enemy_defense_type == 2:
-        damage = int(max(0, enemy_defense - player_attack * 0.7))
-    else:
-        # Otras combinaciones de tipos de ataque y defensa no se manejan, devuelve 0 de daño
-        damage = 0
-    return damage
+def calculate_damage(damage, type1, defense, type2):
+    if type1 == 1 and type2 == 1:
+        # Tipo de ataque físico y tipo de defensa física
+        damageTotal = int(max(0, damage * 2.5 - defense))
+    elif type1 == 1 and type2 == 2:
+        # Tipo de ataque físico y tipo de defensa de evasión
+        damageTotal = int(max(0, damage * 0.9 - defense))
+    elif type1 == 2 and type2 == 1:
+        # Tipo de ataque mágico y tipo de defensa física
+        damageTotal = int(max(0, damage * 0.9 - defense))
+    elif type1 == 2 and type2 == 2:
+        # Tipo de ataque mágico y tipo de defensa de evasión
+        damageTotal = int(max(0, damage * 2.5 - defense))
+    return damageTotal
 
 def start_game(player, final_level):
     try:
-        while player.lvl <= final_level and player.lives > 0:
-            player_level = player.lvl
-            print("\nComienza el nivel", player_level)
+        while player.level <= final_level and player.lives > 0:
+            clear_terminal()
+            player_level = player.level
+            print("-" * 50)
+            print(f"\nNIVEL: {player_level}\n")
+            print("-" * 50)
             enemy = generate_enemy(player_level)
 
-            while True:  # Cambiar el bucle a un bucle infinito
-                if not character_actions_menu(player, enemy):  # Si la pelea termina, sal del bucle
+            while True:
+                if not character_actions_menu(player, enemy):
                     break
 
         print("¡Has completado todos los niveles! ¡Felicidades!")
     except SystemExit:
-        print("¡Has salido del juego!")   
+        print("-" * 50)
+        print("\n¡Has salido del juego!\n")  
+        print("-" * 50) 
+    
+def clear_terminal():
+    os.system('clear')  # Este comando limpia la terminal en sistemas Linux
+
+def press_enter_to_continue():
+    input("\n* Press Enter to continue...")
     
 def main():
-    print("¡Bienvenido al juego!")
-
+    clear_terminal()
+    
+    print("-" * 50)
+    print("\n¡Bienvenido al juego!\n")
+    print("-" * 50)
+    
     nivel_final = configuration()
     personaje = generate_character()
-
+    
+    press_enter_to_continue()
+    clear_terminal()
+    
     start_game(personaje, nivel_final)
 
 if __name__ == "__main__":
