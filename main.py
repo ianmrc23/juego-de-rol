@@ -92,7 +92,7 @@ def character_actions_menu():
     elif choice == "4":
         character_menu()
     elif choice == "5":
-        quit_game()
+        return True
     else:
         print("Invalid choice. Please select again.")
         character_actions_menu()
@@ -228,8 +228,7 @@ def visit_shop():
     print("Coming soon in version 2.0: Shop feature with armor, weapons, and consumables using linked lists.")
   
 def quit_game():
-    # Implementation for quitting the game
-    pass  
+    raise SystemExit  
     
 def select_attack_defense(player, player_resistance):
     while True:
@@ -433,80 +432,37 @@ def select_enemy_attack_defense(enemy, enemy_resistance):
     return enemy_attack, enemy_defense 
     
 def calculate_damage(player_attack, player_attack_type, enemy_defense, enemy_defense_type):
-    pass
-
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-def comenzar_juego(nivel_final, personaje):
-    while nivel_jugador <= nivel_final:
-        print("\nComienza el nivel", nivel_jugador)
-        enemigo = generar_enemigo(nivel_jugador)
-
-        while personaje.hp > 0 and enemigo.hp > 0:
-            accion = input("\n¿Qué acción desea realizar? (analizar/enfrentar/huir): ")
-
-            if accion == "analizar":
-                personaje.analizar_enemigo(enemigo)
-            elif accion == "enfrentar":
-                pelear(personaje, enemigo)
-            elif accion == "huir":
-                if personaje.huir(enemigo.agilidad):
-                    print("Has logrado huir del enemigo.")
-                    break
-                else:
-                    print("No has podido huir del enemigo. ¡Prepárate para enfrentarlo!")
-
-        if personaje.hp <= 0:
-            print("Has sido derrotado. ¡Fin del juego!")
-            terminar_juego()
-            break
-        elif enemigo.hp <= 0:
-            print("Has derrotado al enemigo. ¡Continúa al siguiente nivel!")
-            nivel_jugador += 1
-
-    print("¡Has completado todos los niveles! ¡Felicidades!")
-
-def pelear(personaje, enemigo):
-    # Lógica del combate
-    pass
-
-def terminar_juego(vidas_jugador, nivel_jugador, nivel_final):
-    if vidas_jugador <= 0:
-        print("Game Over. Tus vidas han llegado a cero.")
-    elif nivel_jugador > nivel_final:
-        print("¡Has completado todos los niveles! ¡Felicidades!")
+    if player_attack_type == 1 and enemy_defense_type == 1:
+        damage = int(max(0, enemy_defense - player_attack * 1.3))
+    elif player_attack_type == 1 and enemy_defense_type == 2:
+        damage = int(max(0, enemy_defense - player_attack * 0.7))
     else:
-        print("Regresando al menú principal.")
+        # Otras combinaciones de tipos de ataque y defensa no se manejan, devuelve 0 de daño
+        damage = 0
+    return damage
 
+def start_game(player, final_level):
+    try:
+        while player.lvl <= final_level and player.lives > 0:
+            player_level = player.lvl
+            print("\nComienza el nivel", player_level)
+            enemy = generate_enemy(player_level)
+
+            while True:  # Cambiar el bucle a un bucle infinito
+                if not character_actions_menu(player, enemy):  # Si la pelea termina, sal del bucle
+                    break
+
+        print("¡Has completado todos los niveles! ¡Felicidades!")
+    except SystemExit:
+        print("¡Has salido del juego!")   
+    
 def main():
     print("¡Bienvenido al juego!")
 
-    nivel_final = configuracion()
-    personaje = generar_personaje()
+    nivel_final = configuration()
+    personaje = generate_character()
 
-    comenzar_juego(nivel_final, personaje)
+    start_game(personaje, nivel_final)
 
 if __name__ == "__main__":
     main()
